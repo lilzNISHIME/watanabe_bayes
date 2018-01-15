@@ -1,0 +1,151 @@
+\documentclass[11pt,a4paper]{jsarticle}
+%
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{ascmac}
+\usepackage{amsmath}
+%
+\setlength{\textwidth}{\fullwidth}
+\setlength{\textheight}{39\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\voffset}{-0.5in}
+\setlength{\headsep}{0.3in}
+%
+\newcommand{\divergence}{\mathrm{div}\,}  %ダイバージェンス
+\newcommand{\grad}{\mathrm{grad}\,}  %グラディエント
+\newcommand{\rot}{\mathrm{rot}\,}  %ローテーション
+%
+\pagestyle{myheadings}
+%\markright{\footnotesize ベイズ統計の理論と方法 輪読会@沖縄 第1回 }
+\begin{document}
+%
+%
+\section*{ベイズ統計の理論と方法 輪読会@沖縄 第1回 ノート}
+このノートは, 読み進めた内容に加え, 輪読会でのコメントや議論をまとめたものです. 間違い, 質問, 追記すべき内容などがあれば 西銘(\textrm{taiki.one4k@gmail.com}) までよろしくお願い致します. 注意: 数式番号は本書に合わせて表記しています.
+
+\section{はじめに}
+1章では, ベイズ推測を定義し, 本書で述べることのあらましを述べる. 本書で必要になる初等確率論, 例えば, 条件付き確率やカルバック $\cdot$ ライブラ情報量などについては, 8章の内容を参考にして頂きたい. 
+
+\subsection{ベイズ推測の定義}
+
+ベイズ推測の定義の為に必要な定義を紹介する.
+\begin{description}
+\item[サンプル]\mbox{}
+\[x_i \in \mathbb{R}^N (i = 1,2,3, ... ,n) \tag{1.1} \]
+$N, n$を自然数とする. $N$次元実ユークリッド空間$\mathbb{R}$上に$n$個の集合をサンプルと呼ぶ. $n$個のサンプルを1つの記号で表す時には$x^n = (x_1, x_2, \cdots , x_n)$ という記号を用いる.
+
+\item[真の分布]\mbox{}\\
+各サンプル$x^n$は, ある確率分布$q(x)$に独立に従う確率変数$X^n$の実現値であると考える. また, この$q(x)$を真の分布と呼ぶ.
+\[q(x^n) = \prod_{i=1}^{n}q(x_i) = q(x_1)q(x_2)\cdots q(x_n) \tag{1.4} \]
+
+\item[サンプルの現れ方に対する平均]\mbox{}\\
+サンプルを表す確率変数$X^n$の関数$f(X^n)$が与えられた時, 平均値を取る操作$\mathbb{E[　]}$を以下のように表記する.
+\[\mathbb{E}[f(X^n)] = \iint \cdots \int f(x_1, x_2, ... , x_n) \prod_{i=1}^{n}q(x_i) dx_i \]
+
+\item[真の分布$q(x)$による平均]\mbox{}\\
+サンプル$X^n$とは独立な確率変数$X$の関数$f(X)$についての平均を以下のように表記する.
+\[\mathbb{E}_{X}[f(X)] = \int f(x)q(x) dx\]
+\end{description}
+
+真の分布を推測するために用いられるベイズ推測の定義を紹介する. ベイズ推測においては, 確率モデル, 事前分布, 逆温度$\beta$の事後分布が用いられる.
+\begin{description}
+\item[確率モデル]\mbox{}\\
+パラメータ$w \in W \subset \mathbb{R}^d$が与えられた時の$x\in \mathbb{R}^N$の上の条件付き分布$p(x|w)$を確率モデルと呼ぶ. 条件付き確率分布については, 8.3節(p206)を参照.
+
+\item[事前分布]\mbox{}\\
+$w \in W$上の確率分布 $\varphi(w)$ を事前分布と呼ぶ. $p(w)$ではなく$\varphi(w)$と表記される. ここで, 確率モデルも事前分布も真の分布に対して適切であると仮定しないことに注意したい.
+
+\item[事後分布]\mbox{}\\
+パラメータ$w$の逆温度$\beta (0 < \beta < \infty)$の事後分布を以下のように定義する.
+\[ p(w|X^n) = \frac{1}{Z_{n}(\beta)}\varphi(w)\prod_{i=1}^{n}p(X_i|w)^{\beta} \tag{1.5}\]
+
+逆温度$\beta$を用いて事後分布を定義するのであれば, $p_{\beta}(w|X^n)$という形で逆温度を使っても良いのでは, というコメントもあった.
+
+\item[分配関数]\mbox{}\\
+\[ Z_n(\beta) = \int_W \varphi(w)\prod_{i=1}^{n}p(X_i|w)^{\beta} dw  \tag{1.6}\]
+事後分布に用いられる $Z_n(\beta)$は事後分布の $w \in W$に関する積分が1になるように定めた定数であり, 分配関数と呼ばれる. また, 下式で表されるように$\beta = 1$のとき, $Z_n(1)$を周辺尤度と呼ぶ. 同時分布$p(X^n, w)$については, 8.3節(p206)を参照.
+\begin{eqnarray*}
+Z_n(1) &=& \int_W \varphi(w)\prod_{i=1}^{n}p(X_i|w)dw \\
+&=& \int_W p(X^n,  w) dw \\
+&=& p(X^n)
+\end{eqnarray*}
+
+\item[事後分布による平均]\mbox{}\\
+パラメータ$w$の関数$f(w)$が与えられたとき, 事後分布$p(w|X^n)$による平均を以下のように表記する.
+\[ \mathbb{E}_{w}[f(w)] = \int f(w)p(w|X^n) dw \tag{1.7} \]
+これはパラメータ$w$の関数ではないが, 事後分布で平均を行うのでパラメータ$X^n$に伴って変化するので, $\mathbb{E}_{w}[f(w)]$は確率変数として考えることができる.
+
+\item[予測分布]\mbox{}\\
+事後分布によって確率モデル$p(x|w)$を平均したものを予測分布という.
+\[ p^{*}(x) = \mathbb{E}_{w}[p(x|w)] = \int p(x|w)p(w|X^n)dw \tag{1.8}\]
+また, $p^{*} = p(x|X^n)$ と書く場合もある. ベイズ推測とは, ``真の確率分布q(x)は, おおよそp*(x)であろう"と推測することである. また, 予測分布 $p^{*}$も, サンプル$X^n$に応じて確率的に変動する. 
+\end{description}
+
+ベイズ統計では, 事前分布、確率モデルから定義される事後分布, 予測分布を用いて真の分布を推測する. 真の分布に対して, 事前分布, 確率モデルが適切でサンプルが多ければ良い予測分布であることが期待されるが, 実際のところ, この予測分布は, どのような条件の下でどの程度良い推定になっているだろうか, という疑問が浮ぶ. 本書では予測分布と真の分布がどれだけ似ているか, 推定が真の分布と似ているようにするためにはどうすべきか, これらの問題を考えるために拠って立つことができる数学的構造について考えていく. また, 真の分布や確率モデル, 事前分布に依存しない数学的法則に基づき, 確率モデルと事前分布が考察している問題においてどれほど適切かを数量的に評価することに関しても述べていく. (p5-7より抜粋)
+
+\subsection{考察される量}
+統計的推測という確率的な現象を推測するために、ベイズ推測においては、自由エネルギーと汎化誤差について考察する.
+
+\subsubsection{分配関数と自由エネルギー}
+分配関数と自由エネルギーの性質について述べる.
+
+分配関数の$\beta = 1$における$Z_{n}(1)$は、$X^n$の関数であり、$X^n$について積分すると1になるので, $Z_n(1)$は確率モデル$p(x|w)$と事前分布$\varphi(w)$から推測された$X^n$の確率分布である. 本書では, このことを明記したい場合には, $Z_n(1)$を, $p(X^n)$と書く.
+\begin{eqnarray*}
+Z_n(1) &=& \int dx_{1} \int dx_{2} \cdots \int dx_{n} Z_n(1)\\
+&=& \int dx_{1} \int dx_{2} \cdots \int dx_{n} \left(\int \varphi(w)dw \prod_{i=1}^{n}p(x_i|w)\right) \\
+&=& \int \varphi(w)dw \left(\int dx_{1} \int dx_{2} \cdots \int dx_{n}\prod_{i=1}^{n}p(x_i|w)\right)\\
+&=& \int \varphi(w)dw \left(\int dx_{1}p(x_1|w) \int dx_{2}p(x_2|w) \cdots \int dx_{n}p(x_n|w)\right)\\
+&=& \int \varphi(w)dw \prod_{i=1}^{n} \left(\int dx_i p(x_i|w)\right) = 1
+\end{eqnarray*} 
+
+逆温度$\beta$の分配関数を用いて自由エネルギー$F_n(\beta)$は以下のように定義される. また, $\beta = 1$の場合には, 自由エネルギーは対数周辺尤度の反転符号である.
+
+\[ F_n(\beta) = -\frac{1}{\beta}\log Z_n(\beta) \tag{1.13}\]
+
+真の分布$q(x)$のエントロピー$S$と経験エントロピー$S_n$を用いて、自由エネルギーがベイズ統計学において重要な量であることを説明する. 真の分布のエントロピーと経験エントロピーは以下のように定義される.
+
+\begin{align*}
+S = - \int q(x) \log q(x) dx \tag{1.15}\\
+S_n = - \frac{1}{n} \sum_{i=1}^{n} \log q(X_i) \tag{1.16}
+\end{align*}
+
+経験エントロピーの平均値が, 真の分布のエントロピーとなることを示す.
+\begin{eqnarray*}
+\mathbb{E}[S_n] &=& \int S_n q(x^n) dx^n\\
+&=& - \frac{1}{n} \int \sum_{i=1}^{n} \log q(x_i) \prod_{j=1}^{n} q(x_j) dx_j\\
+&=& - \frac{1}{n} \left[ \iint \cdots \int \log (x_1) \prod_{i=1}^{n} q(x_j) dx_j + \cdots +  \iint \cdots \int \log (x_n) \prod_{i=1}^{n} q(x_j) dx_j\right]\\
+\end{eqnarray*}
+
+ここで
+\begin{eqnarray*}
+\iint \cdots \int \log (x_1) \prod_{i=1}^{n} q(x_j) dx_j &=& \int q(x_1) log q(x_1) dx_1 \int q(x_2) \cdots \int q(x_n) dx_n\\
+&=& -S
+\end{eqnarray*}
+となるので、
+
+\begin{align*}
+- \frac{1}{n} \left[ \iint \cdots \int \log (x_1) \prod_{i=1}^{n} q(x_j) dx_j + \cdots +  \iint \cdots \int \log (x_n) \prod_{i=1}^{n} q(x_j) dx_j\right] = -\frac{1}{n} [-nS] = S\\
+\mathbb{E}[S_n] = S \tag{1.17}
+\end{align*}
+となる. また, 定義から逆温度$\beta = 1$の自由エネルギーは以下のようになる.
+
+\begin{eqnarray*}
+F_{n}(1) &=& - \log P(X^n)\\
+&=& -\log q(X^n) + log q(X^n) - log P(X^n)\\
+&=& -\log \prod_{i=1}^{n} q(X_i) + \log \frac{q(X^n)}{p(X^n)}\\
+&=& - \sum_{i=1}^{n} \log q(X_i) + \log \frac{q(X^n)}{p(X^n)}
+\end{eqnarray*}
+\[ F_{n}(1) = nS_n + \log \frac{q(X^n)}{p(X^n)} \tag{1.18}\]
+
+また, この自由エネルギーに対し, $X^n$の現れ方に関する平均$\mathbb{E[　]}$をとると以下のようになる.
+\begin{eqnarray*}
+\mathbb{E}[F_{n}(1)] &=& \int F_n(1)q(x^n) dx^n\\
+&=& \int \left\{nS_n + \log \frac{q(X^n)}{p(X^n)} \right\} q(x^n) dx^n\\
+&=& n \int S_n q(x^n) dx^n + \int q(x^n) \log \frac{q(X^n)}{p(X^n)} dx^n
+\end{eqnarray*}
+\[\mathbb{E}[F_{n}(1)] = nS + \int q(x^n) \log \frac{q(X^n)}{p(X^n)} dx^n \tag{1.19}\]
+
+この式の右辺第1項の$nS$は真の分布のエントロピーであり, 確率モデルと事前分布に依存しない. 右辺第2項は, $q(x^n)$と$p(x^n)$のカルバック$\cdot$ライブラ距離(p208)である. よって, $\mathbb{E}[F_{n}(1)]$の値が小さくなると, $q(x^n)$と$p(x^n)$のカルバック$\cdot$ライブラ距離の値が小さくなり, 推測した分布$p(x^n)$が真の分布$q(x^n)$をよく近似していると考えることができる. しかし, $\mathbb{E}[F_{n}(1)]$の値は真の分布が含まれているため計算することが難しく, 算出できる値は$F_n(1)$であり, $F_n(1)$が小さいからと言って, 推定された分布の精度が良いことを保証するのではない. 以後、本書では, 自由エネルギーの大きさから、どの程度推定の精度について調べることができるのか、という問題について調べていく.
+
+\end{document}
